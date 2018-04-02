@@ -2,45 +2,37 @@ const Rx = require('rxjs');
 
 /*
 
-Title: zip
+Title: Scan
 
 */
 
-let foo$ = Rx.Observable.interval(500).take(5)
-let bar$ = Rx.Observable.interval(400).take(4)
+let foo$ = Rx.Observable.of('h', 'e' , 'l', 'l', 'o' );
+let bar$ = Rx.Observable.interval(400).take(5)
 
 /*
-
-----0----1----2----3----4| foo$
----0---1---2---3| bar$
-   ^   ^   ^   ^
+(hello)--------------|
+---0---1---2---3---4|
 zip
-----0----2----4----6|
+---h---e---l---l---o|
+scan((acc, x) => acc + x, '')
+---h---(he)---(hel)---(hell)---(hello)|
+
+縦じゃなくて、横方向に合成したい場合
 
 
-----H----e----l----l----o| (foo$)
---0--1--0--1--0--1--0| (bar$)
---^--^--^--^--^
-zip
-----h----E----l----L----o
-
-
-zip
-First of foo + First of bar => First of output
-Second of foo + Second of bar => Second of output
-......
-N-th of foo + N-th of bar => N-th of output
-
-
-
+ クリックイベントをカウントしたいりする時
+----ev-------ev--ev------|
+        map(ev => +1)
+----1--------1---1-------|
+  scan((acc, x) => acc + x, 0)
+----1--------2---3-------|
 
 
 */ 
 
 
 
-
-let combined$ = foo$.zip(bar$, (x, y) => x + y);
+let combined$ = foo$.zip(bar$, (x, y) => x ).scan((acc, x, i) => acc + x + i , '');
 // Same as Rx.zip(foo$, bar$, (x,y) => x + y);
 
 function a() {
