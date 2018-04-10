@@ -2,7 +2,7 @@ const Rx = require('rxjs');
 
 /*
 
-Title: Buffer
+Title: Delay
 
 */
 
