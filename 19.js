@@ -21,7 +21,7 @@ outputObs: はエラーが起きる前までのStreamを取って、Observable�
 map(toUpperCase)
 --A--B--A--A--#|
 catch(err => x)
---a--b--a--A--x|  skip c
+--A--D--A--A--x|  skip c
 
 */
 
