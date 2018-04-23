@@ -11,7 +11,7 @@ const observerA = {
   complete: () => console.log("done")
 };
 
-connectableObservable.connect(); // 内部のSubjectをSubscribe
+const sub = connectableObservable.connect(); // 手動でスタートしている。明示的に終わらせないと終了しない。
 
 connectableObservable.subscribe(observerA);
 
@@ -25,14 +25,15 @@ setTimeout( () => {
   connectableObservable.subscribe(observerB);
 }, 2000);
 
+setTimeout( () => {
+  sub.unsubscribe();
+  console.log('unsbscribed');
+}, 5000);
+
+
 
 
 /*
-Multicast and connect
-
-MulticastはSubjectを引数にとる。記述が省略できる。
-connectを実行しないとSubjectがSubscribeされない。
-
 
 
 */

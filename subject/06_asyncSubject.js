@@ -1,9 +1,6 @@
 const Rx = require("rxjs");
 
-const connectableObservable = Rx.Observable.interval(1000)
-    .take(5)
-    .multicast(new Rx.Subject());
-
+const subject = new Rx.AsyncSubject();
 
 const observerA = {
   next: x => console.log('A next: '+x),
@@ -11,9 +8,8 @@ const observerA = {
   complete: () => console.log("done")
 };
 
-connectableObservable.connect(); // 内部のSubjectをSubscribe
-
-connectableObservable.subscribe(observerA);
+subject.subscribe(observerA) // Subject をSubscribe
+console.log('A subscribed');
 
 const observerB = {
   next: x => console.log('B next: '+ x),
@@ -22,16 +18,40 @@ const observerB = {
 };
 
 setTimeout( () => {
-  connectableObservable.subscribe(observerB);
-}, 2000);
+  subject.subscribe(observerB);// Subject をSubscribe
+console.log('B subscribed');
+}, 5000);
 
+
+setTimeout(() => { subject.next(1); }, 1000)
+setTimeout(() => { subject.next(2); }, 2000)
+setTimeout(() => { subject.next(3); }, 3000)
+setTimeout(() => { subject.complete(); }, 4000)
 
 
 /*
-Multicast and connect
+asyncSubject()
 
-MulticastはSubjectを引数にとる。記述が省略できる。
-connectを実行しないとSubjectがSubscribeされない。
+Completeしていれば、最後の1つの値を返す。
+
+AsyncSubject()
+S  -----1-----2-----3-----------
+A                      3|
+B                            3|
+
+Output
+
+​​​​​A subscribed​​​​​ 
+
+​​​​​A next: 3​​​​​
+
+​​​​​done​​​​​
+
+​​​​​B next: 3​​​​​
+
+​​​​​done​​​​​
+
+​​​​​B subscribed​​​​​ 
 
 
 
