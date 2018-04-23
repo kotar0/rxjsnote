@@ -1,8 +1,9 @@
 const Rx = require("rxjs");
 
-const observable = Rx.Observable.interval(1000).take(5);
+const connectableObservable = Rx.Observable.interval(1000)
+    .take(5)
+    .multicast(new Rx.Subject());
 
-const subject = new Rx.Subject();
 
 const observerA = {
   next: x => console.log('A next: '+x),
@@ -10,8 +11,9 @@ const observerA = {
   complete: () => console.log("done")
 };
 
-observable.subscribe(subject)
-subject.subscribe(observerA);
+connectableObservable.connect(); // 内部のSubjectをSubscribe
+
+connectableObservable.subscribe(observerA);
 
 const observerB = {
   next: x => console.log('B next: '+ x),
@@ -20,13 +22,16 @@ const observerB = {
 };
 
 setTimeout( () => {
-  subject.subscribe(observerB);// Subject をSubscribe
+  connectableObservable.subscribe(observerB);
 }, 2000);
 
 
 
 /*
 Multicast and connect
+
+MulticastはSubjectを引数にとる。記述が省略できる。
+connectを実行しないとSubjectがSubscribeされない。
 
 
 
