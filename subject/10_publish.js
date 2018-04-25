@@ -1,10 +1,8 @@
 const Rx = require("rxjs");
 
-const connectableObservable = Rx.Observable
+const autoConnectedObservable = Rx.Observable
     .interval(1000)
-    .multicast(new Rx.Subject())
-
-const autoConnectedObservable = connectableObservable.refCount();
+    .share() // = .publish().refCount();
 
 const observerA = {
   next: x => console.log('A next: '+x),
@@ -37,10 +35,15 @@ setTimeout( () => {
 
 
 /*
-refCount
+publish and share
 
-  自動的にconnectを開始して、Subscribeしているストリームが0になったら、完了する。
+publish = multicast + Subject
+publishReplay = multicast + ReplaySubject
+publishBehavior = multicast + BehaviorSubject
+publishLast = multicast + AsyncSubject
 
+share = publish + refCount
+^ refConunt をpublishReplayなどと使いたい場合はshareを使わない。
 
 */
 
